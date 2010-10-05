@@ -29,7 +29,7 @@ use Email::Simple;
 use Email::Date qw(find_date);
 
 use FindBin;
-use lib "$FindBin::Bin/../lib";
+use lib "$FindBin::RealBin/../lib";
 use CIL;
 use CIL::Issue;
 use CIL::Comment;
