@@ -27,7 +27,7 @@ use Carp;
 
 use CIL;
 use CIL::Utils;
-use Date::Simple;
+use HTTP::Date;
 
 use base qw(CIL::Base);
 
@@ -132,7 +132,7 @@ sub is_valid {
 
     # check that the DueDate is valid
     if ( $self->DueDate ) {
-        unless ( Date::Simple->new($self->DueDate) ) {
+        unless ( defined HTTP::Date::str2time($self->DueDate) ) {
             push @errors, "DueDate is not a valid date";
         }
     }

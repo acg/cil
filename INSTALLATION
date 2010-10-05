@@ -6,7 +6,6 @@ Dependencies
 Perl Modules:
 
  * Class::Accessor
- * Date::Simple
  * DateTime
  * Digest (Perl core module)
  * Email::Date
@@ -18,6 +17,7 @@ Perl Modules:
  * File::Touch
  * Getopt::Mixed
  * Git (from the git distribution)
+ * HTTP::Date
  * MIME::Base64 (Perl core module)
 
 Install these with your system's respective package manager.

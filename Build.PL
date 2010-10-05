@@ -10,7 +10,6 @@ my $builder = Module::Build->new(
     build_requires => {
         'Class::Accessor'  => 0,
         'DateTime'         => 0,
-        'Date::Simple'     => 0,
         'Digest::MD5'      => 0,
         'Email::Date'      => 0,
         'Email::Find'      => 0,
@@ -23,6 +22,7 @@ my $builder = Module::Build->new(
         'File::Temp'       => 0,
         'File::Touch'      => 0,
         'Getopt::Mixed'    => 0,
+        'HTTP::Date'       => 0,
         'MIME::Base64'     => 0,
         'Test::More'       => 0,
     },
