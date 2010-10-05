@@ -345,6 +345,8 @@ sub display_issue {
     $class->field( 'AssignedTo', $issue->AssignedTo() );
     $class->field( 'DueDate', $issue->DueDate() )
         if $issue->DueDate();
+    $class->field( 'Estimated', $issue->Estimated() )
+        if $issue->Estimated();
     $class->field( 'Label', $_ )
         foreach sort @{$issue->LabelList()};
     $class->field( 'Comment', $_ )
@@ -374,6 +376,8 @@ sub display_issue_full {
     $class->field( 'AssignedTo', $issue->AssignedTo() );
     $class->field( 'DueDate', $issue->DueDate() )
         if $issue->DueDate();
+    $class->field( 'Estimated', $issue->Estimated() )
+        if $issue->Estimated();
     $class->field( 'Label', $_ )
         foreach sort @{$issue->Label()};
     $class->field( 'DependsOn', $_ )
@@ -506,6 +510,7 @@ sub display_issue_headers {
     $class->field( 'CreatedBy', $issue->CreatedBy() );
     $class->field( 'AssignedTo', $issue->AssignedTo() );
     $class->field( 'DueDate', $issue->DueDate() );
+    $class->field( 'Estimated', $issue->Estimated() );
     $class->field( 'Inserted', $issue->Inserted() );
     $class->field( 'Status', $issue->Status() );
     $class->field( 'Labels', join(' ', @{$issue->LabelList()}) );
