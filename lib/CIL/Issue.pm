@@ -28,7 +28,6 @@ use Carp;
 use CIL;
 use CIL::Utils;
 use Date::Simple;
-use DateTime;
 
 use base qw(CIL::Base);
 
@@ -226,7 +225,7 @@ sub start_work {
     croak 'work has already been started on this issue'
         if defined $lastworked && defined $time0 && !defined $time1;
 
-    my $now = DateTime->now->iso8601;
+    my $now = CIL::Utils->timestamp;
     push @$worked, sprintf "%s %s" => $cil->UserEmail, $now;
  
     $self->set_updated_now();
@@ -245,7 +244,7 @@ sub stop_work {
     croak 'you are not working on this issue'
         unless $email eq $cil->UserEmail;
 
-    my $now = DateTime->now->iso8601;
+    my $now = CIL::Utils->timestamp;
     $worked->[-1] = sprintf "%s %s %s" => $email, $time0, $now;
  
     $self->set_updated_now();

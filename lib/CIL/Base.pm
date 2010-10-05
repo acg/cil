@@ -24,7 +24,6 @@ package CIL::Base;
 use strict;
 use warnings;
 use Carp;
-use DateTime;
 use CIL::Utils;
 
 use base qw(Class::Accessor);
@@ -177,7 +176,7 @@ sub set_no_update {
 
 sub set_inserted_now {
     my ($self) = @_;
-    my $time = DateTime->now->iso8601;
+    my $time = CIL::Utils->timestamp;
     $self->{data}{Inserted} = $time;
     $self->{data}{Updated} = $time;
     $self->{Changed} = 1;
@@ -185,7 +184,7 @@ sub set_inserted_now {
 
 sub set_updated_now {
     my ($self) = @_;
-    my $time = DateTime->now->iso8601;
+    my $time = CIL::Utils->timestamp;
     $self->{data}{Updated} = $time;
     $self->{Changed} = 1;
 }

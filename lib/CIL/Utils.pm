@@ -30,6 +30,7 @@ use Email::Find;
 use POSIX qw(getpgrp tcgetpgrp);
 use Fcntl qw(:DEFAULT :flock);
 use Digest::MD5 qw(md5_hex);
+use DateTime;
 
 ## ----------------------------------------------------------------------------
 # setup some globals
@@ -550,6 +551,12 @@ sub check_paths {
     unless ( $cil->dir_exists($cil->IssueDir) ) {
         $class->fatal("couldn't find '" . $cil->IssueDir . "' directory");
     }
+}
+
+sub timestamp {
+  my ($class, $epoch) = (shift, shift || time);
+  my $dt = DateTime->from_epoch( epoch => $epoch, time_zone => "local" );
+  return $dt->strftime("%FT%TZ%z");
 }
 
 sub ans {
