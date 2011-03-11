@@ -131,8 +131,9 @@ sub is_valid {
     }
 
     # check that the DueDate is valid
-    if ( $self->DueDate ) {
-        unless ( defined HTTP::Date::str2time($self->DueDate) ) {
+    if ( my $date = $self->DueDate ) {
+        $date =~ s/Z[+-]?\d+$//;  # chop off time zone, str2time can't handle it
+        unless ( defined HTTP::Date::str2time($date) ) {
             push @errors, "DueDate is not a valid date";
         }
     }
