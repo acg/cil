@@ -34,7 +34,7 @@ use base qw(CIL::Base);
 # fields specific to Issue
 __PACKAGE__->mk_accessors(qw(Summary Status AssignedTo DueDate Estimated DependsOn Precedes Label Comment Attachment Description));
 
-my @FIELDS = ( qw(Summary Status CreatedBy AssignedTo DueDate Estimated DependsOn Precedes Label Comment ttachment Inserted Updated Description) );
+my @FIELDS = ( qw(Summary Status CreatedBy AssignedTo DueDate Estimated DependsOn Precedes Label Comment Attachment Inserted Updated Description) );
 my $cfg = {
     array => {
         Label      => 1,
