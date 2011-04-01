@@ -3,6 +3,8 @@ package CIL::TimeSheet;
 use strict;
 use warnings;
 use Carp;
+use POSIX qw/ strftime /;
+use HTTP::Date qw/ str2time /;
 
 use CIL::Issue;
 
@@ -12,6 +14,7 @@ use base qw(Class::Accessor);
 __PACKAGE__->mk_accessors(qw( FullName ShortName Worked ));
 
 my @FILE_FIELDS = qw( issue status time0 time1 comment );
+my $TIME_FORMAT = "%Y/%m/%d %H:%M:%S %z";
 
 
 sub new
@@ -115,6 +118,7 @@ sub load {
         chomp;
         my @fields = split /\t/, $_, 0+@FILE_FIELDS;
         my %record = map { $FILE_FIELDS[$_] => $fields[$_] } (0 .. @FILE_FIELDS-1);
+        $record{$_} = $record{$_} ? parse_timezstamp( $record{$_} ) : '' for qw/ time0 time1 /;
         push @{ $self->{data}{Worked} }, \%record;
     }
 
@@ -142,7 +146,9 @@ sub write
 
     for my $record (@{ $self->{data}{Worked} })
     {
-        print $fh join "\t" => @{$record}{@FILE_FIELDS};
+        my %record = %$record;
+        $record{$_} = $record{$_} ? strftime( $TIME_FORMAT, localtime($record{$_}) ) : '' for qw/ time0 time1 /;
+        print $fh join "\t" => @record{@FILE_FIELDS};
         print $fh "\n";
     }
 
@@ -172,6 +178,12 @@ sub tempfile
         $cil->IssueDir, $self->{data}{ShortName};
 }
 
+sub parse_timezstamp
+{
+  my $timestamp = shift;
+  my $zone = ($timestamp =~ s/\s*Z?([+-]?\d\d\d\d)$// and $1 or undef);
+  return str2time( $timestamp, $zone );
+}
 
 1;
 
