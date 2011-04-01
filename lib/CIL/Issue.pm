@@ -32,9 +32,9 @@ use HTTP::Date;
 use base qw(CIL::Base);
 
 # fields specific to Issue
-__PACKAGE__->mk_accessors(qw(Summary Status AssignedTo DueDate Estimated DependsOn Precedes Label Comment Worked Attachment Description));
+__PACKAGE__->mk_accessors(qw(Summary Status AssignedTo DueDate Estimated DependsOn Precedes Label Comment Attachment Description));
 
-my @FIELDS = ( qw(Summary Status CreatedBy AssignedTo DueDate Estimated DependsOn Precedes Label Comment Worked Attachment Inserted Updated Description) );
+my @FIELDS = ( qw(Summary Status CreatedBy AssignedTo DueDate Estimated DependsOn Precedes Label Comment ttachment Inserted Updated Description) );
 my $cfg = {
     array => {
         Label      => 1,
@@ -42,7 +42,6 @@ my $cfg = {
         Attachment => 1,
         DependsOn  => 1,
         Precedes   => 1,
-        Worked     => 1,
     },
 };
 
@@ -73,7 +72,6 @@ sub new {
         Attachment  => [],
         DependsOn   => [],
         Precedes    => [],
-        Worked      => [],
         Description => '',
     };
     $self->{Changed} = 0;
@@ -216,41 +214,6 @@ sub add_precedes {
     $self->set_updated_now();
 }
 
-sub start_work {
-    my ($self, $cil) = @_;
-
-    my $worked = $self->{data}{Worked};
-    my $lastworked = $worked->[-1];
-    my ($email, $time0, $time1) = split( /\s+/, $lastworked || "", 3 );
-
-    croak 'work has already been started on this issue'
-        if defined $lastworked && defined $time0 && !defined $time1;
-
-    my $now = CIL::Utils->timestamp;
-    push @$worked, sprintf "%s %s" => $cil->UserEmail, $now;
- 
-    $self->set_updated_now();
-}
-
-sub stop_work {
-    my ($self, $cil) = @_;
-
-    my $worked = $self->{data}{Worked};
-    my $lastworked = $worked->[-1];
-    my ($email, $time0, $time1) = split( /\s+/, $lastworked || "", 3 );
-
-    croak 'work has not been started on this issue'
-        unless defined $lastworked && defined $time0 && !defined $time1;
-
-    croak 'you are not working on this issue'
-        unless $email eq $cil->UserEmail;
-
-    my $now = CIL::Utils->timestamp;
-    $worked->[-1] = sprintf "%s %s %s" => $email, $time0, $now;
- 
-    $self->set_updated_now();
-}
-
 sub LabelList {
     my ($self) = @_;
     return $self->{data}{Label};
@@ -274,11 +237,6 @@ sub DependsOnList {
 sub PrecedesList {
     my ($self) = @_;
     return $self->{data}{Precedes};
-}
-
-sub WorkedList {
-    my ($self) = @_;
-    return $self->{data}{Worked};
 }
 
 sub is_open {

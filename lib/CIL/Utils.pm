@@ -358,8 +358,6 @@ sub display_issue {
         foreach sort @{$issue->DependsOnList()};
     $class->field( 'Precedes', $_ )
         foreach sort @{$issue->PrecedesList()};
-    $class->field( 'Worked', $_ )
-        foreach sort @{$issue->WorkedList()};
     $class->field( 'Inserted', $issue->Inserted() );
     $class->field( 'Updated', $issue->Inserted() );
     $class->text('Description', $issue->Description());
@@ -385,8 +383,6 @@ sub display_issue_full {
         foreach sort @{$issue->DependsOnList()};
     $class->field( 'Precedes', $_ )
         foreach sort @{$issue->PrecedesList()};
-    $class->field( 'Worked', $_ )
-        foreach sort @{$issue->WorkedList()};
     $class->field( 'Inserted', $issue->Inserted() );
     $class->field( 'Updated', $issue->Updated() );
     $class->text('Description', $issue->Description());
@@ -517,7 +513,6 @@ sub display_issue_headers {
     $class->field( 'Labels', join(' ', @{$issue->LabelList()}) );
     $class->field( 'DependsOn', join(' ', @{$issue->DependsOnList()}) );
     $class->field( 'Precedes', join(' ', @{$issue->PrecedesList()}) );
-    $class->field( 'Worked', join(' ', @{$issue->WorkedList()}) );
 }
 
 sub title {

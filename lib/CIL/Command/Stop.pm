@@ -31,27 +31,39 @@ use base qw(CIL::Command);
 sub name { 'stop' }
 
 sub run {
-    my ($self, $cil, $args, $issue_name) = @_;
+    my ($self, $cil, $args) = @_;
 
-    # firstly, read the issue in
-    my $issue = CIL::Utils->load_issue_fuzzy( $cil, $issue_name );
+    ### Read and update the user's timesheet.
 
-    $issue->stop_work($cil);
-    $issue->save($cil);
+    my $issue;
+    my $timesheet;
+    
+    $timesheet = CIL::TimeSheet->new( $cil->UserName );
+    $timesheet->load( $cil );
+    $issue = $timesheet->stop_work( $cil, $args->{comment} );
+    $timesheet->commit( $cil );
 
-    if ( $cil->UseGit ) {
-        # if we want to add or commit this issue
-        if ( $args->{add} or $args->{commit} ) {
-            $cil->git->add( $cil, $issue );
+    ### If an issue was found and updated, save changes.
+
+    if ($issue)
+    {
+        $issue->save( $cil ) if $issue;
+
+        if ( $cil->UseGit ) {
+            # if we want to add or commit this issue
+            if ( $args->{add} or $args->{commit} ) {
+                $cil->git->add( $cil, $issue );
+                $cil->git->add( $cil, $timesheet );
+            }
+
+            # if we want to commit this issue
+            if ( $args->{commit} ) {
+                $cil->git->commit( $cil, 'Stopped Work', $issue );
+            }
         }
 
-        # if we want to commit this issue
-        if ( $args->{commit} ) {
-            $cil->git->commit( $cil, 'Stopped Work', $issue );
-        }
+        CIL::Utils->display_issue_summary($issue);
     }
-
-    CIL::Utils->display_issue_full($cil, $issue);
 }
 
 1;

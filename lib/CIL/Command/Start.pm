@@ -25,6 +25,7 @@ use strict;
 use warnings;
 
 use base qw(CIL::Command);
+use CIL::TimeSheet;
 
 ## ----------------------------------------------------------------------------
 
@@ -34,15 +35,30 @@ sub run {
     my ($self, $cil, $args, $issue_name) = @_;
 
     # firstly, read the issue in
+
     my $issue = CIL::Utils->load_issue_fuzzy( $cil, $issue_name );
 
-    $issue->start_work($cil);
-    $issue->save($cil);
+    # read and update the user's timesheet
+
+    my $issue_prev;
+    my $timesheet;
+    
+    $timesheet = CIL::TimeSheet->new( $cil->UserName );
+    $timesheet->load( $cil );
+    $issue_prev = $timesheet->start_work( $cil, $issue, $args->{comment} );
+    $timesheet->commit( $cil );
+
+    # update the new and previous working issues, for status updates.
+
+    $issue->save( $cil );
+    $issue_prev->save( $cil ) if $issue_prev;
 
     if ( $cil->UseGit ) {
         # if we want to add or commit this issue
         if ( $args->{add} or $args->{commit} ) {
             $cil->git->add( $cil, $issue );
+            $cil->git->add( $cil, $issue_prev ) if $issue_prev;
+            $cil->git->add( $cil, $timesheet );
         }
 
         # if we want to commit this issue
@@ -51,7 +67,7 @@ sub run {
         }
     }
 
-    CIL::Utils->display_issue_full($cil, $issue);
+    CIL::Utils->display_issue_summary($issue);
 }
 
 1;
