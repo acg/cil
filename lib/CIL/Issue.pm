@@ -32,9 +32,9 @@ use HTTP::Date;
 use base qw(CIL::Base);
 
 # fields specific to Issue
-__PACKAGE__->mk_accessors(qw(Summary Status AssignedTo DueDate Estimated DependsOn Precedes Label Comment Attachment Description));
+__PACKAGE__->mk_accessors(qw(Summary Status AssignedTo DueDate Estimated DependsOn Precedes Parent Label Comment Attachment Description));
 
-my @FIELDS = ( qw(Summary Status CreatedBy AssignedTo DueDate Estimated DependsOn Precedes Label Comment Attachment Inserted Updated Description) );
+my @FIELDS = ( qw(Summary Status CreatedBy AssignedTo DueDate Estimated DependsOn Precedes Parent Label Comment Attachment Inserted Updated Description) );
 my $cfg = {
     array => {
         Label      => 1,
@@ -72,6 +72,7 @@ sub new {
         Attachment  => [],
         DependsOn   => [],
         Precedes    => [],
+        Parent      => '',
         Description => '',
     };
     $self->{Changed} = 0;
@@ -211,6 +212,19 @@ sub add_precedes {
     return if grep { $_ eq $precedes } @{$self->{data}{Precedes}};
 
     push @{$self->{data}{Precedes}}, $precedes;
+    $self->set_updated_now();
+}
+
+sub add_parent {
+    my ($self, $parent) = @_;
+
+    croak 'provide an issue name when adding a parent'
+        unless defined $parent;
+
+    # return if we already have this parent
+    return if $parent eq ($self->{data}{parent}||'');
+
+    $self->{data}{Parent} = $parent;
     $self->set_updated_now();
 }
 

@@ -129,6 +129,14 @@ sub run {
                     push @{$errors->{$name}}, "issue '$p' listed as preceding issue '" . $i->name . "' does not exist";
                 }
             }
+
+            # make sure parent issue exists
+            if (my $parent = $i->Parent) {
+                if ( not exists $issue->{$parent} ) {
+                    push @{$errors->{$name}}, "parent issue '$parent' for '" . $i->name . "' does not exist";
+                }
+            }
+
         }
     }
     print_fsck_errors('Issue', $errors);
