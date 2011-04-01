@@ -221,6 +221,9 @@ sub add_parent {
     croak 'provide an issue name when adding a parent'
         unless defined $parent;
 
+    croak 'cannot add self as parent issue'
+        if $parent eq $self->name();
+
     # return if we already have this parent
     return if $parent eq ($self->{data}{parent}||'');
 
